@@ -13,23 +13,36 @@ export type TabState = {
 }
 
 // 定义store
-export const useTabStore = defineStore('tabStore', () => {
-  // 定义state
-  const tabList = ref<Tab[]>([])
+export const useTabStore = defineStore(
+  'tabStore',
+  () => {
+    // 定义state
+    const tabList = ref<Tab[]>([])
 
-  // 计算属性获取选项卡列表
-  const getTab = computed(() => tabList.value)
+    // 计算属性获取选项卡列表
+    const getTab = computed(() => tabList.value)
 
-  // 添加选项卡数据
-  const addTab = (tab: Tab) => {
-    // 判断数据是否已经在选项卡列表中
-    if (tabList.value.some((item) => item.path === tab.path)) return
-    tabList.value.push(tab)
+    // 添加选项卡数据
+    const addTab = (tab: Tab) => {
+      if (tabList.value.some((item) => item.path === tab.path)) return
+      tabList.value.push(tab)
+    }
+
+    return {
+      tabList,
+      getTab,
+      addTab
+    }
+  },
+  {
+    persist: {
+      enabled: true,
+      strategies: [
+        {
+          key: 'tabStore', // 自定义持久化的键名
+          storage: localStorage // 使用localStorage存储数据
+        }
+      ]
+    }
   }
-
-  return {
-    tabList,
-    getTab,
-    addTab
-  }
-})
+)
