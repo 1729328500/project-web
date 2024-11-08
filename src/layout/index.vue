@@ -8,6 +8,7 @@
         <Header></Header>
       </el-header>
       <el-main class="main">
+        <Tabs></Tabs>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -16,8 +17,15 @@
 <script setup lang="ts">
 import Header from '@/layout/header/Header.vue'
 import MenuBar from '@/layout/menu/MenuBar.vue'
+import Tabs from '@/layout/tabs/Tabs.vue'
 </script>
 <style lang="scss">
+.mycontainer {
+  height: 100%;
+  .leftmenu {
+    background-color: #304156;
+  }
+}
 .layout {
   height: 100%;
   .asside {
@@ -29,7 +37,7 @@ import MenuBar from '@/layout/menu/MenuBar.vue'
     background-color: #009688;
   }
   .main {
-    background-color: darkgoldenrod;
+    background-color: rgb(247, 247, 247);
   }
 }
 </style>
