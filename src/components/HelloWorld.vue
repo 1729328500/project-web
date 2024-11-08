@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <h1>{{ store.count }}</h1>
   <h2>{{ count }}</h2>
   <h2>{{ msg }}</h2>
@@ -30,4 +30,4 @@ const addBtn = () => {
     state.count = ++state.count
   })
 }
-</script> -->
+</script>

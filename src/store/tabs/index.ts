@@ -24,10 +24,19 @@ export const useTabStore = defineStore(
 
     // 添加选项卡数据
     const addTab = (tab: Tab) => {
+      // 判断数据是否已存在选项卡列表中
       if (tabList.value.some((item) => item.path === tab.path)) return
-      tabList.value.push(tab)
+
+      // 首页不能关闭
+      if (tab.path === '/dashboard') {
+        // 如果是首页，加到第一个，不关闭
+        tabList.value.unshift(tab)
+      } else {
+        tabList.value.push(tab)
+      }
     }
 
+    // 返回的对象中应该包含 getTab
     return {
       tabList,
       getTab,
