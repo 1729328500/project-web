@@ -103,16 +103,17 @@ const searchParm = reactive({
   roleName: '',
   total: 0
 })
-//判断新增还是编辑的标识 0:新增 1：编辑
+// 判断新增还是编辑的标识 0:新增 1:编辑
 const tags = ref('')
 
-// 新增按钮点击事件
+// 新增按钮
 const addBtn = () => {
-  dialog.title = '新增角色'
+  tags.value = '0'
+  dialog.title = '新增'
   dialog.height = 180
   // 显示弹框
   onShow()
-  //清空表单
+  // 清空表单
   addRef.value?.resetFields()
 }
 
@@ -145,14 +146,15 @@ const commit = () => {
         // 新增
         res = await addApi(addModel)
       } else {
-        res = await editApi(addModel) // 编辑
-        if (res && res.code === 200) {
-          ElMessage.success(res.msg)
-          // 刷新列表
-          getList()
-          // 关闭弹框
-          onClose()
-        }
+        // 编辑
+        res = await editApi(addModel)
+      }
+      if (res && res.code === 200) {
+        ElMessage.success(res.msg)
+        // 刷新列表
+        getList()
+        // 关闭弹框
+        onClose()
       }
     }
   })
@@ -162,6 +164,8 @@ const commit = () => {
 const editBtn = (row: SysRole) => {
   tags.value = '1'
   console.log(row)
+  // 显示弹框
+  dialog.visible = true
   dialog.title = '编辑'
   dialog.height = 180
   nextTick(() => {
