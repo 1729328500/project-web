@@ -9,11 +9,13 @@
     "preview": "vite preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix --quiet",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changelog": " npx conventional-changelog -i CHANGELOG.md -s"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.7",
+    "conventional-changelog-cli": "^5.0.0",
     "element-plus": "^2.8.6",
     "pinia": "^2.2.5",
     "pinia-plugin-persist": "^1.0.0",

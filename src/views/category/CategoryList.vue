@@ -1,13 +1,7 @@
 <template>
-    <div>
-商品类型
-    </div>
+  <div>商品类型</div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>
