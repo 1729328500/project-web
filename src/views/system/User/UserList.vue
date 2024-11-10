@@ -71,7 +71,11 @@
           <el-row>
             <el-col :span="12" :offset="0">
               <el-form-item prop="roleId" label="角色：">
-                <SelectChecked :options="options" @selected="selected">
+                <SelectChecked
+                  ref="selectRef"
+                  :options="options"
+                  @selected="selected"
+                >
                 </SelectChecked>
               </el-form-item>
             </el-col>
@@ -92,12 +96,13 @@
   </el-main>
 </template>
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, nextTick } from 'vue'
 import useDialog from '@/hooks/useDialog'
 import SysDialog from '@/components/SysDialog.vue'
-import { FormInstance } from 'element-plus'
+import { FormInstance, ElMessage } from 'element-plus'
 import SelectChecked from '@/components/SelectChecked.vue'
 import { getSelectApi } from '@/api/role'
+import { addApi } from '@/api/user/index'
 
 // 表单ref属性
 const addForm = ref<FormInstance>()
@@ -164,10 +169,18 @@ const rules = reactive({
 })
 //新增按钮
 const addBtn = () => {
+  options.value = []
+  getSelect()
   dialog.title = '新增'
-  dialog.height = 180
+  dialog.height = 260
   onShow()
+  nextTick(() => {
+    selectRef.value.clear()
+  })
+  addForm.value?.resetFields()
 }
+
+const selectRef = ref()
 
 // 下拉数据
 let options = ref([])
@@ -182,19 +195,24 @@ const selected = (value: Array<string | number>) => {
 const getSelect = async () => {
   let res = await getSelectApi()
   if (res && res.code === 200) {
+    options.value = []
     options.value = res.data
   }
 }
 //提交表单
 const commit = () => {
-  // 验证表单
-  addForm.value?.validate((valid) => {
+  addForm.value?.validate(async (valid) => {
     if (valid) {
       console.log('验证通过')
+      let res = await addApi(addModel)
+      if (res && res.code == 200) {
+        ElMessage.success(res.msg)
+        onClose()
+      }
     }
   })
 }
 onMounted(() => {
-  getSelect()
+  // getSelect()
 })
 </script>
