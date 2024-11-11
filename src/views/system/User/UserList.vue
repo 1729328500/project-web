@@ -160,9 +160,16 @@ import SysDialog from '@/components/SysDialog.vue'
 import { FormInstance, ElMessage } from 'element-plus'
 import SelectChecked from '@/components/SelectChecked.vue'
 import { getSelectApi } from '@/api/role'
-import { addApi, getListApi, getRoleListApi, editApi } from '@/api/user/index'
+import {
+  addApi,
+  getListApi,
+  getRoleListApi,
+  editApi,
+  deleteApi
+} from '@/api/user/index'
+import useInstance from '@/hooks/useInstance'
 import { User } from '@/api/user/UserModel'
-
+const { global } = useInstance()
 // 表单ref属性
 const addForm = ref<FormInstance>()
 
@@ -287,10 +294,17 @@ const editBtn = async (row: User) => {
   addForm.value?.resetFields()
 }
 // 删除按钮
-const deleteBtn = (userId: string) => {
+const deleteBtn = async (userId: string) => {
   console.log(userId)
+  const confirm = await global.$myConfirm('确定删除该数据吗?')
+  if (confirm) {
+    let res = await deleteApi(userId)
+    if (res && res.code == 200) {
+      ElMessage.success(res.msg)
+      getList()
+    }
+  }
 }
-
 const selectRef = ref()
 
 // 下拉数据
