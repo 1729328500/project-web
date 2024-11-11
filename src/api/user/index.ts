@@ -23,3 +23,7 @@ export const editApi = (parm: User) => {
 export const deleteApi = (userId: string) => {
   return http.delete(`/api/sysUser/${userId}`)
 }
+// 重置密码
+export const resetPasswordApi = (parm: { userId: string }) => {
+  return http.post('/api/sysUser/resetPassword', parm)
+}

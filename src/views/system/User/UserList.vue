@@ -56,6 +56,14 @@
             >编辑</el-button
           >
           <el-button
+            type="warning"
+            icon="Setting"
+            size="default"
+            @click="resetPasswordBtn(scope.row.userId)"
+          >
+            重置密码
+          </el-button>
+          <el-button
             type="danger"
             icon="Delete"
             size="default"
@@ -165,7 +173,8 @@ import {
   getListApi,
   getRoleListApi,
   editApi,
-  deleteApi
+  deleteApi,
+  resetPasswordApi
 } from '@/api/user/index'
 import useInstance from '@/hooks/useInstance'
 import { User } from '@/api/user/UserModel'
@@ -247,6 +256,19 @@ const getRoleList = async (userId: string) => {
     console.log(res.data)
     roleIds.value = res.data.join(',')
     console.log(roleIds.value)
+  }
+}
+// 重置密码
+const resetPasswordBtn = async (userId: string) => {
+  const confirm = await global.$myConfirm(
+    '确定重置密码吗，重置之后密码是666666？！'
+  )
+  if (confirm) {
+    let res = await resetPasswordApi({ userId: userId })
+    if (res && res.code == 200) {
+      ElMessage.success(res.msg)
+      getList()
+    }
   }
 }
 // 新增按钮
