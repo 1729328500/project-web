@@ -3,6 +3,61 @@
     <el-button type="primary" icon="Plus" size="default" @click="addBtn"
       >新增</el-button
     >
+    <!-- 表格 -->
+    <el-table
+      style="margin-top: 20px"
+      default-expand-all
+      :data="tableList"
+      row-key="menuId"
+      border
+      stripe
+    >
+      <el-table-column label="菜单名称" prop="title"></el-table-column>
+      <el-table-column label="菜单图标" prop="icon">
+        <template #default="scope">
+          <el-icon v-if="scope.row.icon">
+            <component :is="scope.row.icon"></component>
+          </el-icon>
+        </template>
+      </el-table-column>
+      <el-table-column label="类型" prop="type">
+        <template #default="scope">
+          <el-tag v-if="scope.row.type == '0'" type="danger" size="default"
+            >目录</el-tag
+          >
+          <el-tag v-if="scope.row.type == '1'" type="success" size="default"
+            >菜单</el-tag
+          >
+          <el-tag v-if="scope.row.type == '2'" type="primary" size="default"
+            >按钮</el-tag
+          >
+        </template>
+      </el-table-column>
+      <el-table-column label="上级菜单" prop="parentName"></el-table-column>
+      <el-table-column label="路由名称" prop="name"></el-table-column>
+      <el-table-column label="路由地址" prop="path"></el-table-column>
+      <el-table-column label="组件路径" prop="url"></el-table-column>
+      <el-table-column label="序号" prop="orderNum"></el-table-column>
+      <el-table-column label="操作" align="center" width="220">
+        <template #default="scope">
+          <el-button
+            type="primary"
+            icon="Edit"
+            size="default"
+            @click="editBtn(scope.row)"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            icon="Delete"
+            size="default"
+            @click="deleteBtn(scope.row.menu)"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+
     <!-- 新增弹框 -->
     <SysDialog
       :title="dialog.title"
@@ -24,10 +79,13 @@
           <el-form-item prop="type" label="菜单类型">
             <el-radio-group v-model="addModel.type">
               <el-radio :label="'0'">目录</el-radio>
+
               <el-radio :label="'1'">菜单</el-radio>
+
               <el-radio :label="'2'">按钮</el-radio>
             </el-radio-group>
           </el-form-item>
+
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="上级菜单" prop="parentId">
@@ -41,42 +99,49 @@
                 />
               </el-form-item>
             </el-col>
+
             <el-col :span="12" :offset="0">
               <el-form-item label="菜单名称" prop="title">
                 <el-input v-model="addModel.title"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
+
           <el-row v-if="addModel.type != '2'" :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="菜单图标" prop="icon">
                 <el-input v-model="addModel.icon"></el-input>
               </el-form-item>
             </el-col>
+
             <el-col :span="12" :offset="0">
               <el-form-item label="路由名称" prop="name">
                 <el-input v-model="addModel.name"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
+
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="菜单序号" prop="orderNum">
                 <el-input v-model="addModel.orderNum"></el-input>
               </el-form-item>
             </el-col>
+
             <el-col :span="12" :offset="0">
               <el-form-item label="权限字段" prop="code">
                 <el-input v-model="addModel.code"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
+
           <el-row :gutter="20">
             <el-col v-if="addModel.type != '2'" :span="12" :offset="0">
               <el-form-item label="路由地址" prop="path">
                 <el-input v-model="addModel.path"></el-input>
               </el-form-item>
             </el-col>
+
             <el-col v-if="addModel.type == '1'" :span="12" :offset="0">
               <el-form-item label="组件路径" prop="url">
                 <el-input v-model="addModel.url"></el-input>
@@ -93,9 +158,9 @@
 import SysDialog from '@/components/SysDialog.vue'
 import useDialog from '@/hooks/useDialog'
 import { ElMessage, FormInstance } from 'element-plus'
-import { reactive, ref } from 'vue'
-import { getParentApi, addApi } from '@/api/menu/index'
-
+import { onMounted, reactive, ref } from 'vue'
+import { getParentApi, addApi, getListApi } from '@/api/menu/index'
+import { MenuType } from '@/api/menu/MenuModel'
 //表单ref属性
 const addForm = ref<FormInstance>()
 //弹框属性
@@ -116,6 +181,7 @@ const addBtn = () => {
   //显示弹框
   onShow()
 }
+
 //表单绑定的对象
 const addModel = reactive({
   menuId: '',
@@ -131,6 +197,7 @@ const addModel = reactive({
   orderNum: ''
 })
 //上级菜单选中事件
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const treeClick = (item: any) => {
   console.log(item)
   addModel.parentName = item.title
@@ -201,6 +268,14 @@ const rules = reactive({
     }
   ]
 })
+//编辑
+const editBtn = (row: MenuType) => {
+  console.log(row)
+}
+//删除
+const deleteBtn = (menuId: string) => {
+  console.log(menuId)
+}
 //表单提交
 const commit = () => {
   addForm.value?.validate(async (valid) => {
@@ -215,6 +290,17 @@ const commit = () => {
     }
   })
 }
+//获取表格数据
+const tableList = ref([])
+const getList = async () => {
+  let res = await getListApi()
+  if (res && res.code == 200) {
+    tableList.value = res.data
+  }
+}
+onMounted(() => {
+  getList()
+})
 </script>
 
 <style scoped></style>
