@@ -18,3 +18,9 @@ export type UserListParm = {
   pageSize: number
   total: number
 }
+//登录
+export type Login = {
+  username: string
+  password: string
+  code: string
+}
