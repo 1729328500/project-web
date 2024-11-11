@@ -14,3 +14,12 @@ export const addApi = (parm: MenuType) => {
 export const getListApi = () => {
   return http.get('/api/sysMenu/list')
 }
+//编辑
+export const editApi = (parm: MenuType) => {
+  return http.put('/api/sysMenu', parm)
+}
+
+//删除
+export const deleteApi = (menuId: string) => {
+  return http.delete(`/api/sysMenu/${menuId}`)
+}
