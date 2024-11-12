@@ -9,6 +9,7 @@ import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { createPinia } from 'pinia'
 import piniaPersist from 'pinia-plugin-persist'
+import * as echarts from 'echarts'
 
 const pinia = createPinia()
 
@@ -18,6 +19,7 @@ import myConfirm from './utils/myConfirm'
 
 const app = createApp(App)
 app.config.globalProperties.$myConfirm = myConfirm
+app.config.globalProperties.$echarts = echarts
 
 // 全局注册图标组件
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
