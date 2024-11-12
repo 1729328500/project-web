@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.web.bind.annotation.*;
+import top.whyh.jwt.JwtUtils;
 import top.whyh.result.ResultVo;
 import top.whyh.utils.ResultUtils;
 import top.whyh.web.sys_menu.entity.AssignTreeParm;
@@ -24,9 +25,7 @@ import top.whyh.web.sys_user_role.service.SysUserRoleService;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/sysUser")
@@ -36,6 +35,7 @@ public class SysUserController {
     private final SysUserService sysUserService;
     private final SysUserRoleService sysUserRoleService;
     private final DefaultKaptcha defaultKaptcha;
+    private final JwtUtils jwtUtils;
 
     // 新增用户
     @PostMapping
@@ -166,7 +166,12 @@ public class SysUserController {
         LoginVo vo = new LoginVo();
         vo.setUserId(one.getUserId());
         vo.setNickName(one.getNickName());
-        return ResultUtils.success("登录成功！", vo);
+        // 生成token
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", Long.toString(one.getUserId()));
+        String token = jwtUtils.generateToken(map);
+        vo.setToken(token);
+        return ResultUtils.success("登录成功", vo);
     }
     //查询菜单树
     @PostMapping("/tree")
