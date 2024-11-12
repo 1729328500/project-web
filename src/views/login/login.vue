@@ -98,6 +98,7 @@ const commit = async () => {
         console.log(res)
         store.setUserId(res.data.userId)
         store.setNickName(res.data.nickName)
+        store.setToken(res.data.token)
         // 跳转到首页
         router.push({ path: '/' })
       }
