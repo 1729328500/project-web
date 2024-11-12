@@ -9,6 +9,8 @@
   >
     <template v-slot:content>
       <el-tree
+        ref="treeRef"
+        node-key="menuId"
         show-checkbox
         default-expand-all
         :default-checked-keys="assignTreeData.assignTreeChecked"
@@ -21,28 +23,35 @@
 
 <script setup lang="ts">
 import { getAssignTreeApi } from '@/api/user/index'
-import { reactive } from 'vue'
+import { saveRoleMenuApi } from '@/api/role/index'
+import { reactive, ref } from 'vue'
 import SysDialog from '@/components/SysDialog.vue'
 import useDialog from '@/hooks/useDialog'
 import { useUserStore } from '@/store/user'
+import { ElMessage } from 'element-plus'
+import { ElTree } from 'element-plus'
+
+const treeRef = ref<InstanceType<typeof ElTree>>()
 const store = useUserStore()
 const { dialog, onClose, onShow } = useDialog()
+
 //树的属性配置
 const defaultProps = {
   children: 'children',
   label: 'title'
 }
+
 //树数据
 const assignTreeData = reactive({
   list: [],
   assignTreeChecked: []
 })
+
 //树数据查询的参数
 const parms = reactive({
   userId: '',
   roleId: ''
 })
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const checked = (id: number, data: any, newArr: any) => {
   data.forEach((item: any) => {
     if (item.menuId == id) {
@@ -57,6 +66,7 @@ const checked = (id: number, data: any, newArr: any) => {
     }
   })
 }
+
 //查询菜单树
 const getAssignTree = async () => {
   let res = await getAssignTreeApi(parms)
@@ -73,10 +83,19 @@ const getAssignTree = async () => {
     }
   }
 }
+
+//提交数据
+const commitParm = reactive({
+  roleId: '',
+  list: [] as string[]
+})
+
 //弹框显示
 const show = async (roleId: string, name: string) => {
+  commitParm.roleId = roleId
   assignTreeData.assignTreeChecked = []
   assignTreeData.list = []
+  commitParm.list = []
   parms.roleId = roleId
   parms.userId = store.getUserId
   //设置弹框属性
@@ -87,12 +106,32 @@ const show = async (roleId: string, name: string) => {
   await getAssignTree()
   onShow()
 }
+
 //暴露出去，给外部组件使用
 defineExpose({
   show
 })
-//提交表单
-const commit = () => {}
-</script>
 
+//提交表单
+const commit = async () => {
+  //获取选择的菜单数据
+  console.log(treeRef.value?.getCheckedKeys())
+  console.log(treeRef.value?.getHalfCheckedKeys())
+  const checkIds = treeRef.value?.getCheckedKeys() as string[]
+  const halfcheckIds = treeRef.value?.getHalfCheckedKeys() as string[]
+  let ids = checkIds?.concat(halfcheckIds)
+  //设置选中的节点
+  commitParm.list = ids
+  //判断是否已经选择菜单
+  if (ids.length == 0) {
+    ElMessage.warning('请选择菜单')
+    return
+  }
+  let res = await saveRoleMenuApi(commitParm)
+  if (res && res.code == 200) {
+    ElMessage.success(res.msg)
+    onClose()
+  }
+}
+</script>
 <style scoped></style>
