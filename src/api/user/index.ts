@@ -1,5 +1,5 @@
 import http from '@/http'
-import { User, UserListParm, Login } from './UserModel'
+import { User, UserListParm, Login, AssignParm } from './UserModel'
 
 // 新增用户
 export const addApi = (parm: User) => {
@@ -34,4 +34,8 @@ export const getImgApi = () => {
 // 登录
 export const loginApi = (parm: Login) => {
   return http.post('/api/sysUser/login', parm)
+}
+//查询菜单树
+export const getAssignTreeApi = (parm: AssignParm) => {
+  return http.post('/api/sysUser/tree', parm)
 }
