@@ -14,6 +14,8 @@ import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.web.bind.annotation.*;
 import top.whyh.result.ResultVo;
 import top.whyh.utils.ResultUtils;
+import top.whyh.web.sys_menu.entity.AssignTreeParm;
+import top.whyh.web.sys_menu.entity.AssignTreeVo;
 import top.whyh.web.sys_user.entity.LoginParm;
 import top.whyh.web.sys_user.entity.LoginVo;
 import top.whyh.web.sys_user.entity.SysUser;
@@ -168,5 +170,12 @@ public class SysUserController {
         vo.setUserId(one.getUserId());
         vo.setNickName(one.getNickName());
         return ResultUtils.success("登录成功！", vo);
+    }
+    //查询菜单树
+    @PostMapping("/tree")
+    @Operation(summary="查询菜单树")
+    public ResultVo<?> getAssignTree(@RequestBody AssignTreeParm parm){
+        AssignTreeVo assignTree = sysUserService.getAssignTree(parm);
+        return ResultUtils.success("查询成功", assignTree);
     }
 }
