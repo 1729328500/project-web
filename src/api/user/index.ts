@@ -39,6 +39,11 @@ export const loginApi = (parm: Login) => {
 export const getAssignTreeApi = (parm: AssignParm) => {
   return http.post('/api/sysUser/tree', parm)
 }
+//修改密码
 export const updatePasswordApi = (parm: UpdateParm) => {
   return http.post('/api/sysUser/updatePassword', parm)
+}
+// 获取用户信息
+export const getInfoApi = (userId: string) => {
+  return http.get('/api/sysUser/getInfo', { params: { userId: userId } })
 }

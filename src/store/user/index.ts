@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { getInfoApi } from '@/api/user'
+import { resolve } from 'path'
+import { rejects } from 'assert'
 
 // 定义 store: 使用组合式 API 风格
 export const useUserStore = defineStore(
@@ -30,6 +33,23 @@ export const useUserStore = defineStore(
       token.value = newToken
     }
 
+    const getInfo = () => {
+      return new Promise((resolve, reject) => {
+        getInfoApi(userId.value)
+          .then((res) => {
+            if (res && res.code === 200) {
+              codeList.value = res.data.permissions
+              resolve(codeList.value)
+            }
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    }
+
+    // 返回需要暴露的 state、getters 和 actions
+
     // 返回需要暴露的 state, getters 和 actions
     return {
       userId,
@@ -42,7 +62,8 @@ export const useUserStore = defineStore(
       getCodeList,
       setUserId,
       setNickName,
-      setToken
+      setToken,
+      getInfo
     }
   },
   {
